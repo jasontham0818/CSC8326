@@ -119,3 +119,44 @@ a.make()
 Commandline to create alignment 
 -mod9.25 model.py
 
+Improving the models with scripts and reference from PSIPRED:
+from modeller import *
+from modeller.automodel import *
+
+log.verbose()
+env = environ()
+
+template='2edv'
+chain='A'
+tc=template+chain
+
+class MyModel(automodel):
+    def get_model_filename(self,sequence, id1, id2, file_ext):
+        return sequence+'_'+`id2`+file_ext
+
+    def special_restraints(self, aln):
+        rsr = self.restraints
+        rsr.add(secondary_structure.strand(self.residue_range('12:', '18:')))
+        rsr.add(secondary_structure.strand(self.residue_range('24:', '25:')))
+        rsr.add(secondary_structure.alpha(self.residue_range('27:','30:')))
+        rsr.add(secondary_structure.strand(self.residue_range('34:', '39:')))
+        rsr.add(secondary_structure.alpha(self.residue_range('48:','61:')))
+        rsr.add(secondary_structure.strand(self.residue_range('66:', '72:')))
+        rsr.add(secondary_structure.alpha(self.residue_range('84:','93:')))
+        rsr.add(secondary_structure.alpha(self.residue_range('99:','100:')))
+        rsr.add(secondary_structure.strand(self.residue_range('101:', '106:')))
+        rsr.add(secondary_structure.alpha(self.residue_range('114:','121:')))
+        rsr.add(secondary_structure.strand(self.residue_range('132:', '136:')))
+        rsr.add(secondary_structure.strand(self.residue_range('142:', '146:')))
+        rsr.add(secondary_structure.alpha(self.residue_range('152:','171:')))
+
+a = MyModel(env, alnfile='target-'+tc+'.ali',
+          knowns=tc, sequence='target',
+          assess_methods=(assess.DOPE, assess.GA341))
+a.starting_model = 1
+a.ending_model = 5
+a.make()
+
+Running of the script:
+-mod9.25 ImprovingScript.py
+
